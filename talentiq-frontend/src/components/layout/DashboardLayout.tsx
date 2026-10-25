@@ -10,7 +10,8 @@ import {
   Building2, 
   FileText,
   Search,
-  Bell
+  Bell,
+  Sparkles
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -73,6 +74,24 @@ export const DashboardLayout: React.FC<LayoutProps> = ({ children, role }) => {
               >
                 <FileText className="w-4 h-4 text-slate-400" />
                 <span>My Applications</span>
+              </Link>
+              <Link
+                to="/candidate/resumes"
+                className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                  isActive('/candidate/resumes') ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 text-slate-300'
+                }`}
+              >
+                <FileText className="w-4 h-4 text-indigo-400" />
+                <span>My Resumes</span>
+              </Link>
+              <Link
+                to="/candidate/ats"
+                className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                  isActive('/candidate/ats') ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 text-slate-300'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 text-indigo-400" />
+                <span>ATS Intelligence</span>
               </Link>
               <Link
                 to="/candidate/profile"

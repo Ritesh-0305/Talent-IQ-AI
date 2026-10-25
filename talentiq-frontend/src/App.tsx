@@ -10,6 +10,8 @@ import { JobBrowsePage } from './pages/candidate/jobs/JobBrowsePage';
 import { CandidateJobDetailPage } from './pages/candidate/jobs/CandidateJobDetailPage';
 import { CandidateApplicationsPage } from './pages/candidate/CandidateApplicationsPage';
 import { CandidateNotificationsPage } from './pages/candidate/CandidateNotificationsPage';
+import { ResumeManagementPage } from './pages/candidate/resumes/ResumeManagementPage';
+import { AtsAnalysisPage } from './pages/candidate/resumes/AtsAnalysisPage';
 import { RecruiterDashboard } from './pages/recruiter/RecruiterDashboard';
 import { RecruiterProfilePage } from './pages/recruiter/RecruiterProfilePage';
 import { RecruiterJobsPage } from './pages/recruiter/jobs/RecruiterJobsPage';
@@ -33,6 +35,8 @@ export const App: React.FC = () => {
         <Route path="/candidate/jobs/:id" element={<CandidateJobDetailPage />} />
         <Route path="/candidate/applications" element={<CandidateApplicationsPage />} />
         <Route path="/candidate/notifications" element={<CandidateNotificationsPage />} />
+        <Route path="/candidate/resumes" element={<ResumeManagementPage />} />
+        <Route path="/candidate/ats" element={<AtsAnalysisPage />} />
       </Route>
 
       {/* Recruiter Protected Routes */}

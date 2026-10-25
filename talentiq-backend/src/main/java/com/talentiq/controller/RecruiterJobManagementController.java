@@ -26,6 +26,24 @@ public class RecruiterJobManagementController {
 
     private final JobService jobService;
     private final ApplicationService applicationService;
+    private final com.talentiq.service.ResumeService resumeService;
+    private final com.talentiq.repository.UserRepository userRepository;
+
+    @GetMapping("/applications/{applicationId}/resume")
+    public ResponseEntity<com.talentiq.dto.ParsedResumeDto> getApplicantResume(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable Long applicationId,
+            @RequestParam(defaultValue = "false") boolean anonymized
+    ) {
+        com.talentiq.entity.Application app = applicationService.getApplicationForRecruiter(userPrincipal.getId(), applicationId);
+        if (app.getResumeVersion() == null) {
+            throw new com.talentiq.exception.ResourceNotFoundException("No resume attached to this application.");
+        }
+        com.talentiq.entity.User user = userRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new com.talentiq.exception.ResourceNotFoundException("User not found"));
+        com.talentiq.dto.ParsedResumeDto parsed = resumeService.getParsedResume(user, app.getResumeVersion().getId(), anonymized);
+        return ResponseEntity.ok(parsed);
+    }
 
     @PostMapping("/jobs")
     public ResponseEntity<JobDto> createJob(

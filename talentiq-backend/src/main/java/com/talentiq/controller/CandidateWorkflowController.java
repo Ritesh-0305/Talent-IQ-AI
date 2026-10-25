@@ -28,6 +28,7 @@ public class CandidateWorkflowController {
     @Data
     public static class ApplyJobRequest {
         private String coverLetter;
+        private Long resumeVersionId;
     }
 
     @PostMapping("/jobs/{jobId}/apply")
@@ -37,7 +38,8 @@ public class CandidateWorkflowController {
             @RequestBody(required = false) ApplyJobRequest request
     ) {
         String coverLetter = request != null ? request.getCoverLetter() : null;
-        ApplicationDto app = applicationService.applyForJob(userPrincipal.getId(), jobId, coverLetter);
+        Long resumeVerId = request != null ? request.getResumeVersionId() : null;
+        ApplicationDto app = applicationService.applyForJob(userPrincipal.getId(), jobId, coverLetter, resumeVerId);
         return new ResponseEntity<>(app, HttpStatus.CREATED);
     }
 

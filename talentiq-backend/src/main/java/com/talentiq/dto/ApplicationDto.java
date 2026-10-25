@@ -27,6 +27,8 @@ public class ApplicationDto {
     private String candidateName;
     private String candidateEmail;
     private String candidateHeadline;
+    private Long resumeVersionId;
+    private String resumeFilename;
     private String coverLetterText;
     private String status;
     private boolean shortlisted;

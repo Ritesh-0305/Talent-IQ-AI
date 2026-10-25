@@ -16,7 +16,13 @@
 | **Phase 4** | Recruiter Review, Shortlist & Private Notes | **COMPLETED** | Private recruiter notes confidential |
 | **Phase 4** | In-App Notifications & Withdraw Workflow | **COMPLETED** | Automated notifications + state guards |
 | **Phase 4** | Candidate & Recruiter React Workflows | **COMPLETED** | Vite TypeScript production build clean |
-| **Phase 5** | Resume Upload, Parsing & ATS | Pending | Next Phase |
+| **Resume Intelligence** | Secure PDF/DOCX Upload & Validation | **COMPLETED** | Magic bytes, size, empty file checks passing |
+| **Resume Intelligence** | PyMuPDF & python-docx Text Extraction | **COMPLETED** | 7/7 Python tests passing, low-text warnings |
+| **Resume Intelligence** | Structured Parsing & Field Correction | **COMPLETED** | Contact, Skills, Exp, Edu, Proj, Certs editable |
+| **Resume Intelligence** | Transparent ATS Scoring Engine | **COMPLETED** | 4-pillar deterministic model + recommendations |
+| **Resume Intelligence** | Candidate & Recruiter Resume Views | **COMPLETED** | Version history, ATS analysis, blind evaluation |
+| **Resume Intelligence** | Integration & Security Test Suite | **COMPLETED** | 8/8 JUnit integration tests passing (17/17 total) |
+| **Next Module** | Semantic Matching & Explainable Ranking | Pending | Next Phase |
 | **Phase 6** | Semantic Matching & Explainable Ranking | Pending | - |
 | **Phase 7** | Career Guidance & Gap Analysis | Pending | - |
 | **Phase 8** | Mock Interviews & AI Feedback | Pending | - |

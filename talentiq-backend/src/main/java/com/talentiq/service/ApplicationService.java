@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,10 +31,17 @@ public class ApplicationService {
     private final JobRepository jobRepository;
     private final CandidateProfileRepository candidateProfileRepository;
     private final RecruiterProfileRepository recruiterProfileRepository;
+    private final ResumeRepository resumeRepository;
+    private final ResumeVersionRepository resumeVersionRepository;
     private final NotificationService notificationService;
 
     @Transactional
     public ApplicationDto applyForJob(Long candidateUserId, Long jobId, String coverLetter) {
+        return applyForJob(candidateUserId, jobId, coverLetter, null);
+    }
+
+    @Transactional
+    public ApplicationDto applyForJob(Long candidateUserId, Long jobId, String coverLetter, Long resumeVersionId) {
         CandidateProfile candidate = candidateProfileRepository.findByUserId(candidateUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Candidate profile not found for user: " + candidateUserId));
 
@@ -48,9 +56,25 @@ public class ApplicationService {
             throw new BadRequestException("You have already submitted an application for this position.");
         }
 
+        ResumeVersion selectedResumeVersion = null;
+        if (resumeVersionId != null) {
+            selectedResumeVersion = resumeVersionRepository.findById(resumeVersionId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Selected resume version not found: " + resumeVersionId));
+            if (!selectedResumeVersion.getResume().getCandidate().getId().equals(candidate.getId())) {
+                throw new ForbiddenException("Cannot attach a resume version belonging to another candidate.");
+            }
+        } else {
+            // Auto-attach active resume version if candidate has one
+            Optional<Resume> resumeOpt = resumeRepository.findByCandidateIdAndDeletedFalse(candidate.getId());
+            if (resumeOpt.isPresent()) {
+                selectedResumeVersion = resumeVersionRepository.findByResumeIdAndActiveTrue(resumeOpt.get().getId()).orElse(null);
+            }
+        }
+
         Application application = Application.builder()
                 .job(job)
                 .candidate(candidate)
+                .resumeVersion(selectedResumeVersion)
                 .coverLetterText(coverLetter)
                 .status(ApplicationStatus.SUBMITTED)
                 .shortlisted(false)
@@ -239,6 +263,20 @@ public class ApplicationService {
         return toDto(application, true);
     }
 
+    @Transactional(readOnly = true)
+    public Application getApplicationForRecruiter(Long recruiterUserId, Long applicationId) {
+        RecruiterProfile recruiter = recruiterProfileRepository.findByUserId(recruiterUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recruiter profile not found: " + recruiterUserId));
+
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found: " + applicationId));
+
+        if (!application.getJob().getPostedBy().getId().equals(recruiter.getId())) {
+            throw new ForbiddenException("Unauthorized: You do not own the job posting for this application.");
+        }
+        return application;
+    }
+
     public ApplicationDto toDto(Application app, boolean isRecruiterView) {
         List<ApplicationDto.StatusHistoryDto> history = statusHistoryRepository.findByApplicationOrderByChangedAtAsc(app)
                 .stream()
@@ -264,6 +302,9 @@ public class ApplicationService {
                     .collect(Collectors.toList());
         }
 
+        Long resumeVerId = app.getResumeVersion() != null ? app.getResumeVersion().getId() : null;
+        String resumeName = app.getResumeVersion() != null ? app.getResumeVersion().getOriginalFilename() : null;
+
         return ApplicationDto.builder()
                 .id(app.getId())
                 .jobId(app.getJob().getId())
@@ -274,6 +315,8 @@ public class ApplicationService {
                 .candidateName(app.getCandidate().getFirstName() + " " + app.getCandidate().getLastName())
                 .candidateEmail(app.getCandidate().getUser().getEmail())
                 .candidateHeadline(app.getCandidate().getHeadline())
+                .resumeVersionId(resumeVerId)
+                .resumeFilename(resumeName)
                 .coverLetterText(app.getCoverLetterText())
                 .status(app.getStatus().name())
                 .shortlisted(app.isShortlisted())

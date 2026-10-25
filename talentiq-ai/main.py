@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 from app.middleware.api_key_auth import verify_internal_api_key
+from app.routers import resumes
 
 app = FastAPI(
     title="TalentIQ AI Service",
@@ -7,6 +8,8 @@ app = FastAPI(
     version="1.0.0",
     dependencies=[Depends(verify_internal_api_key)]
 )
+
+app.include_router(resumes.router)
 
 @app.get("/health")
 def health_check():
