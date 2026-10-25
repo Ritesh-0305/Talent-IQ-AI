@@ -19,7 +19,7 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email: email.trim(), password });
       login(response.data);
 
       const roles: string[] = response.data.roles || [];

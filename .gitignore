@@ -43,6 +43,7 @@ build/
 node_modules/
 dist/
 talentiq-backend/data/
+data/
 .env.local
 .env.*.local
 npm-debug.log*
