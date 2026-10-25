@@ -72,8 +72,14 @@ export const RegisterPage: React.FC = () => {
         navigate('/recruiter/dashboard');
       }
     } catch (err: any) {
-      if (err.response?.data?.message) {
+      if (err.response?.data?.details && typeof err.response.data.details === 'object') {
+        const details = err.response.data.details as Record<string, string>;
+        const messages = Object.values(details);
+        setError(messages.join(' • '));
+      } else if (err.response?.data?.message) {
         setError(err.response.data.message);
+      } else if (err.code === 'ERR_NETWORK' || !err.response) {
+        setError('Cannot connect to backend server. Please verify the backend is running on port 8088.');
       } else {
         setError('Registration could not be completed. Please check your information and password criteria.');
       }
