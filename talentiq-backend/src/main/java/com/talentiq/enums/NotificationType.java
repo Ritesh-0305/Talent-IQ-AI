@@ -1,0 +1,10 @@
+package com.talentiq.enums;
+
+public enum NotificationType {
+    APPLICATION_SUBMITTED,
+    APPLICATION_STATUS_UPDATED,
+    APPLICATION_SHORTLISTED,
+    APPLICATION_WITHDRAWN,
+    JOB_PUBLISHED,
+    SYSTEM_ALERT
+}
