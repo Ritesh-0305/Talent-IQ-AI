@@ -30,11 +30,16 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          CustomUserDetailsService customUserDetailsService) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.customUserDetailsService = customUserDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
