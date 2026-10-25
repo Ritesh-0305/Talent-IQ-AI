@@ -28,9 +28,24 @@ export const RegisterPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const passwordCriteria = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /\d/.test(password),
+    special: /[^a-zA-Z\d\s]/.test(password),
+  };
+  const isPasswordValid = Object.values(passwordCriteria).every(Boolean);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!isPasswordValid) {
+      setError('Please ensure your password satisfies all 5 security criteria indicated below.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -40,26 +55,26 @@ export const RegisterPage: React.FC = () => {
       if (role === 'CANDIDATE') {
         endpoint = '/auth/register/candidate';
         payload = {
-          email,
+          email: email.trim(),
           password,
-          firstName,
-          lastName,
-          phone,
-          headline,
-          location,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phone: phone.trim(),
+          headline: headline.trim(),
+          location: location.trim(),
         };
       } else {
         endpoint = '/auth/register/recruiter';
         payload = {
-          email,
+          email: email.trim(),
           password,
-          firstName,
-          lastName,
-          phone,
-          title,
-          companyName,
-          companyWebsite,
-          companyIndustry,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phone: phone.trim(),
+          title: title.trim(),
+          companyName: companyName.trim(),
+          companyWebsite: companyWebsite.trim(),
+          companyIndustry: companyIndustry.trim(),
         };
       }
 
@@ -179,7 +194,7 @@ export const RegisterPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300">Password * (min 8 chars, 1 uppercase, 1 digit, 1 special)</label>
+                <label className="block text-xs font-medium text-slate-300">Password *</label>
                 <input
                   type="password"
                   required
@@ -200,6 +215,35 @@ export const RegisterPage: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* Live Password Criteria Checklist */}
+            {password.length > 0 && (
+              <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-700/60 text-xs">
+                <p className="font-semibold text-slate-300 mb-1.5">Password requirements:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px]">
+                  <div className={`flex items-center space-x-1.5 ${passwordCriteria.length ? 'text-emerald-400 font-medium' : 'text-slate-400'}`}>
+                    <span>{passwordCriteria.length ? '✓' : '○'}</span>
+                    <span>At least 8 characters</span>
+                  </div>
+                  <div className={`flex items-center space-x-1.5 ${passwordCriteria.uppercase ? 'text-emerald-400 font-medium' : 'text-slate-400'}`}>
+                    <span>{passwordCriteria.uppercase ? '✓' : '○'}</span>
+                    <span>1 uppercase letter (A-Z)</span>
+                  </div>
+                  <div className={`flex items-center space-x-1.5 ${passwordCriteria.lowercase ? 'text-emerald-400 font-medium' : 'text-slate-400'}`}>
+                    <span>{passwordCriteria.lowercase ? '✓' : '○'}</span>
+                    <span>1 lowercase letter (a-z)</span>
+                  </div>
+                  <div className={`flex items-center space-x-1.5 ${passwordCriteria.number ? 'text-emerald-400 font-medium' : 'text-slate-400'}`}>
+                    <span>{passwordCriteria.number ? '✓' : '○'}</span>
+                    <span>1 numeric digit (0-9)</span>
+                  </div>
+                  <div className={`flex items-center space-x-1.5 ${passwordCriteria.special ? 'text-emerald-400 font-medium' : 'text-slate-400'}`}>
+                    <span>{passwordCriteria.special ? '✓' : '○'}</span>
+                    <span>1 special symbol (!@#$%^&*...)</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Candidate Fields */}
             {role === 'CANDIDATE' && (
