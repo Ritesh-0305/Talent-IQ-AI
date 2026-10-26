@@ -77,11 +77,19 @@ talentiq-ai/.env
 Thumbs.db
 
 # Secrets & Local Configurations
+.env
+.env.*
+!.env.example
 application-dev.yml
 application-local.yml
+application-*.yml
+!application-test.yml
 *.secret
 *.key
-.env
+*.pem
+*.p12
+*.pfx
+*.jks
 
 # Uploads
 uploads/
